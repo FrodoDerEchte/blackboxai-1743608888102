@@ -1,57 +1,58 @@
 <Application x:Class="DateiverwaltungApp.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="MainWindow.xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>
-        <!-- Farben -->
-        <SolidColorBrush x:Key="HauptFarbe" Color="#007ACC"/>
-        <SolidColorBrush x:Key="HintergrundFarbe" Color="White"/>
-        <SolidColorBrush x:Key="TextFarbe" Color="#333333"/>
-        
-        <!-- Button Style -->
-        <Style TargetType="Button">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="LightGray"/>
-            <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="Margin" Value="2"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#f0f0f0"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+        <ResourceDictionary>
+            <!-- Farben -->
+            <SolidColorBrush x:Key="PrimärFarbe" Color="#007ACC"/>
+            <SolidColorBrush x:Key="HintergrundFarbe" Color="White"/>
+            <SolidColorBrush x:Key="TextFarbe" Color="#333333"/>
+            
+            <!-- Button Style -->
+            <Style TargetType="Button">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="BorderBrush" Value="LightGray"/>
+                <Setter Property="Padding" Value="10,5"/>
+                <Setter Property="Margin" Value="2"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#f0f0f0"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
 
-        <!-- TreeView Style -->
-        <Style TargetType="TreeView">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="LightGray"/>
-        </Style>
+            <!-- TreeView Style -->
+            <Style TargetType="TreeView">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="BorderBrush" Value="LightGray"/>
+            </Style>
 
-        <!-- ListView Style -->
-        <Style TargetType="ListView">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="LightGray"/>
-        </Style>
+            <!-- ListView Style -->
+            <Style TargetType="ListView">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="BorderBrush" Value="LightGray"/>
+            </Style>
 
-        <!-- GroupBox Style -->
-        <Style TargetType="GroupBox">
-            <Setter Property="BorderBrush" Value="LightGray"/>
-            <Setter Property="Margin" Value="2"/>
-        </Style>
+            <!-- GroupBox Style -->
+            <Style TargetType="GroupBox">
+                <Setter Property="BorderBrush" Value="LightGray"/>
+                <Setter Property="Margin" Value="2"/>
+            </Style>
 
-        <!-- TextBox Style -->
-        <Style TargetType="TextBox">
-            <Setter Property="BorderBrush" Value="LightGray"/>
-            <Setter Property="Padding" Value="3"/>
-        </Style>
+            <!-- TextBox Style -->
+            <Style TargetType="TextBox">
+                <Setter Property="BorderBrush" Value="LightGray"/>
+                <Setter Property="Padding" Value="3"/>
+            </Style>
 
-        <!-- MenuItem Style -->
-        <Style TargetType="MenuItem">
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#f0f0f0"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+            <!-- MenuItem Style -->
+            <Style TargetType="MenuItem">
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#f0f0f0"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
