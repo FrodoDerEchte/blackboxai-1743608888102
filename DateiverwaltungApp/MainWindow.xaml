@@ -1,7 +1,7 @@
 <Window x:Class="DateiverwaltungApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Dateiverwaltung" Height="450" Width="800">
+        Title="Dateiverwaltung" Height="600" Width="1000">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="White" BorderBrush="LightGray" BorderThickness="0,0,0,1">
             <MenuItem Header="Datei" Foreground="Black">
@@ -19,11 +19,6 @@
                 <MenuItem Header="Öffnen" Click="MenuÖffnen_Click" InputGestureText="Enter">
                     <MenuItem.Icon>
                         <TextBlock Text="📂" FontSize="14"/>
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Header="Zuletzt geöffnet">
-                    <MenuItem.Icon>
-                        <TextBlock Text="🕒" FontSize="14"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
@@ -83,15 +78,10 @@
             <DockPanel Grid.Column="0" Margin="5">
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,5">
                     <TextBox x:Name="Suche" Width="180" Margin="0,0,5,0" BorderBrush="LightGray"/>
-                    <Button Content="Suchen" Width="60" Click="Suchen_Click"
+                    <Button Content="🔍" Width="40" Click="Suchen_Click"
                             Background="White" BorderBrush="LightGray"/>
                 </StackPanel>
-                <TreeView x:Name="Verzeichnisse" Background="White" BorderBrush="LightGray">
-                    <TreeViewItem Header="Zuletzt geöffnet" IsExpanded="True"/>
-                    <TreeViewItem Header="Documents"/>
-                    <TreeViewItem Header="Desktop"/>
-                    <TreeViewItem Header="Downloads"/>
-                </TreeView>
+                <TreeView x:Name="Verzeichnisse" Background="White" BorderBrush="LightGray"/>
             </DockPanel>
 
             <!-- Mittlerer Bereich - Dateiliste -->
@@ -99,7 +89,7 @@
                       MouseDoubleClick="Dateien_MouseDoubleClick">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Name" Width="200">
+                        <GridViewColumn Header="Name" Width="300">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -130,23 +120,27 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Text="Name:" Grid.Row="0" Grid.Column="0" Margin="0,2"/>
-                                <TextBlock Text="{Binding SelectedItem.Name, ElementName=Dateien}" 
-                                         Grid.Row="0" Grid.Column="1" Margin="5,2"/>
+                                <TextBlock x:Name="DateiName" Grid.Row="0" Grid.Column="1" Margin="5,2"/>
 
-                                <TextBlock Text="Größe:" Grid.Row="1" Grid.Column="0" Margin="0,2"/>
-                                <TextBlock Text="{Binding SelectedItem.GrößeAnzeige, ElementName=Dateien}" 
-                                         Grid.Row="1" Grid.Column="1" Margin="5,2"/>
+                                <TextBlock Text="Pfad:" Grid.Row="1" Grid.Column="0" Margin="0,2"/>
+                                <TextBlock x:Name="Pfad" Grid.Row="1" Grid.Column="1" Margin="5,2" TextWrapping="Wrap"/>
 
-                                <TextBlock Text="Geändert:" Grid.Row="2" Grid.Column="0" Margin="0,2"/>
-                                <TextBlock Text="{Binding SelectedItem.ÄnderungsdatumAnzeige, ElementName=Dateien}" 
-                                         Grid.Row="2" Grid.Column="1" Margin="5,2"/>
+                                <TextBlock Text="Größe:" Grid.Row="2" Grid.Column="0" Margin="0,2"/>
+                                <TextBlock x:Name="Größe" Grid.Row="2" Grid.Column="1" Margin="5,2"/>
 
-                                <TextBlock Text="Typ:" Grid.Row="3" Grid.Column="0" Margin="0,2"/>
-                                <TextBlock Text="{Binding SelectedItem.Dateityp, ElementName=Dateien}" 
-                                         Grid.Row="3" Grid.Column="1" Margin="5,2"/>
+                                <TextBlock Text="Erstellt:" Grid.Row="3" Grid.Column="0" Margin="0,2"/>
+                                <TextBlock x:Name="Erstellt" Grid.Row="3" Grid.Column="1" Margin="5,2"/>
+
+                                <TextBlock Text="Geändert:" Grid.Row="4" Grid.Column="0" Margin="0,2"/>
+                                <TextBlock x:Name="Geändert" Grid.Row="4" Grid.Column="1" Margin="5,2"/>
+
+                                <TextBlock Text="Typ:" Grid.Row="5" Grid.Column="0" Margin="0,2"/>
+                                <TextBlock x:Name="Typ" Grid.Row="5" Grid.Column="1" Margin="5,2"/>
                             </Grid>
                         </GroupBox>
                     </StackPanel>
