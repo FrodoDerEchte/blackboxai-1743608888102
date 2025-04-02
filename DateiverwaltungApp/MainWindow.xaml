@@ -4,7 +4,7 @@
         Title="Dateiverwaltung" Height="600" Width="1000">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="White" BorderBrush="LightGray" BorderThickness="0,0,0,1">
-            <MenuItem Header="Datei" Foreground="Black">
+            <MenuItem Header="Datei">
                 <MenuItem Header="Neue Datei" Click="MenuNeueDatai_Click">
                     <MenuItem.Icon>
                         <TextBlock Text="📄" FontSize="14"/>
@@ -16,19 +16,19 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Header="Öffnen" Click="MenuÖffnen_Click" InputGestureText="Enter">
+                <MenuItem Header="Öffnen" Click="MenuÖffnen_Click">
                     <MenuItem.Icon>
                         <TextBlock Text="📂" FontSize="14"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Header="Beenden" Click="MenuBeenden_Click" InputGestureText="Alt+F4">
+                <MenuItem Header="Beenden" Click="MenuBeenden_Click">
                     <MenuItem.Icon>
                         <TextBlock Text="🚪" FontSize="14"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Bearbeiten" Foreground="Black">
+            <MenuItem Header="Bearbeiten">
                 <MenuItem Header="Kopieren" Click="MenuKopieren_Click">
                     <MenuItem.Icon>
                         <TextBlock Text="📋" FontSize="14"/>
@@ -51,14 +51,14 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Ansicht" Foreground="Black">
+            <MenuItem Header="Ansicht">
                 <MenuItem Header="Aktualisieren" Click="MenuAktualisieren_Click">
                     <MenuItem.Icon>
                         <TextBlock Text="🔄" FontSize="14"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Hilfe" Foreground="Black">
+            <MenuItem Header="Hilfe">
                 <MenuItem Header="Über" Click="MenuÜber_Click">
                     <MenuItem.Icon>
                         <TextBlock Text="ℹ️" FontSize="14"/>
@@ -74,18 +74,17 @@
                 <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Linke Seite - Verzeichnisbaum -->
+            <!-- Links - Verzeichnisbaum -->
             <DockPanel Grid.Column="0" Margin="5">
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,5">
-                    <TextBox x:Name="Suche" Width="180" Margin="0,0,5,0" BorderBrush="LightGray"/>
-                    <Button Content="🔍" Width="40" Click="Suchen_Click"
-                            Background="White" BorderBrush="LightGray"/>
+                    <TextBox x:Name="Suche" Width="180" Margin="0,0,5,0"/>
+                    <Button Content="🔍" Width="40" Click="Suchen_Click"/>
                 </StackPanel>
-                <TreeView x:Name="Verzeichnisse" Background="White" BorderBrush="LightGray"/>
+                <TreeView x:Name="Verzeichnisse"/>
             </DockPanel>
 
-            <!-- Mittlerer Bereich - Dateiliste -->
-            <ListView x:Name="Dateien" Grid.Column="1" Margin="5" Background="White" BorderBrush="LightGray"
+            <!-- Mitte - Dateiliste -->
+            <ListView x:Name="Dateien" Grid.Column="1" Margin="5"
                       MouseDoubleClick="Dateien_MouseDoubleClick">
                 <ListView.View>
                     <GridView>
@@ -99,53 +98,50 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Größe" Width="100" DisplayMemberBinding="{Binding GrößeAnzeige}"/>
-                        <GridViewColumn Header="Geändert" Width="150" DisplayMemberBinding="{Binding ÄnderungsdatumAnzeige}"/>
+                        <GridViewColumn Header="Größe" Width="100" 
+                                      DisplayMemberBinding="{Binding GrößeText}"/>
+                        <GridViewColumn Header="Geändert" Width="150" 
+                                      DisplayMemberBinding="{Binding Geändert, StringFormat=dd.MM.yyyy HH:mm}"/>
                     </GridView>
                 </ListView.View>
             </ListView>
 
-            <!-- Rechte Seite - Dateivorschau -->
-            <DockPanel Grid.Column="2" Margin="5">
-                <GroupBox Header="Dateivorschau" DockPanel.Dock="Top" BorderBrush="LightGray">
-                    <StackPanel Margin="5">
-                        <GroupBox Header="Informationen" BorderBrush="LightGray">
-                            <Grid Margin="5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+            <!-- Rechts - Details -->
+            <GroupBox Header="Details" Grid.Column="2" Margin="5">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                                <TextBlock Text="Name:" Grid.Row="0" Grid.Column="0" Margin="0,2"/>
-                                <TextBlock x:Name="DateiName" Grid.Row="0" Grid.Column="1" Margin="5,2"/>
+                    <TextBlock Text="Name:" Grid.Row="0" Grid.Column="0" Margin="0,2"/>
+                    <TextBlock x:Name="DateiName" Grid.Row="0" Grid.Column="1" Margin="5,2"/>
 
-                                <TextBlock Text="Pfad:" Grid.Row="1" Grid.Column="0" Margin="0,2"/>
-                                <TextBlock x:Name="Pfad" Grid.Row="1" Grid.Column="1" Margin="5,2" TextWrapping="Wrap"/>
+                    <TextBlock Text="Pfad:" Grid.Row="1" Grid.Column="0" Margin="0,2"/>
+                    <TextBlock x:Name="Pfad" Grid.Row="1" Grid.Column="1" Margin="5,2" 
+                             TextWrapping="Wrap"/>
 
-                                <TextBlock Text="Größe:" Grid.Row="2" Grid.Column="0" Margin="0,2"/>
-                                <TextBlock x:Name="Größe" Grid.Row="2" Grid.Column="1" Margin="5,2"/>
+                    <TextBlock Text="Größe:" Grid.Row="2" Grid.Column="0" Margin="0,2"/>
+                    <TextBlock x:Name="Größe" Grid.Row="2" Grid.Column="1" Margin="5,2"/>
 
-                                <TextBlock Text="Erstellt:" Grid.Row="3" Grid.Column="0" Margin="0,2"/>
-                                <TextBlock x:Name="Erstellt" Grid.Row="3" Grid.Column="1" Margin="5,2"/>
+                    <TextBlock Text="Erstellt:" Grid.Row="3" Grid.Column="0" Margin="0,2"/>
+                    <TextBlock x:Name="Erstellt" Grid.Row="3" Grid.Column="1" Margin="5,2"/>
 
-                                <TextBlock Text="Geändert:" Grid.Row="4" Grid.Column="0" Margin="0,2"/>
-                                <TextBlock x:Name="Geändert" Grid.Row="4" Grid.Column="1" Margin="5,2"/>
+                    <TextBlock Text="Geändert:" Grid.Row="4" Grid.Column="0" Margin="0,2"/>
+                    <TextBlock x:Name="Geändert" Grid.Row="4" Grid.Column="1" Margin="5,2"/>
 
-                                <TextBlock Text="Typ:" Grid.Row="5" Grid.Column="0" Margin="0,2"/>
-                                <TextBlock x:Name="Typ" Grid.Row="5" Grid.Column="1" Margin="5,2"/>
-                            </Grid>
-                        </GroupBox>
-                    </StackPanel>
-                </GroupBox>
-            </DockPanel>
+                    <TextBlock Text="Typ:" Grid.Row="5" Grid.Column="0" Margin="0,2"/>
+                    <TextBlock x:Name="Typ" Grid.Row="5" Grid.Column="1" Margin="5,2"/>
+                </Grid>
+            </GroupBox>
         </Grid>
     </DockPanel>
 </Window>
