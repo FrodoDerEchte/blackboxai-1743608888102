@@ -173,6 +173,16 @@ namespace DateiverwaltungApp
             OrdnerLaden();
         }
 
+        // Hilfe-Menü Events
+        private void MenuÜber_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(
+                "Dateiverwaltung\nVersion 1.0\n\nEine einfache Anwendung zur Verwaltung von Dateien und Ordnern.",
+                "Über",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
         // Sonstige Events
         private void Suchen_Click(object sender, RoutedEventArgs e)
         {
