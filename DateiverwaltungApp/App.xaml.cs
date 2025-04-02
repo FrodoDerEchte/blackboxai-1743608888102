@@ -19,6 +19,11 @@ namespace DateiverwaltungApp
                 
                 args.Handled = true;
             };
+
+            // Anwendungseinstellungen
+            this.ShutdownMode = ShutdownMode.OnMainWindowClose;
+            this.MainWindow = new MainWindow();
+            this.MainWindow.Show();
         }
     }
 }
