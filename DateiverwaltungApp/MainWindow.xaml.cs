@@ -9,7 +9,6 @@ namespace DateiverwaltungApp
 {
     public partial class MainWindow : Window
     {
-        // Variablen für die Dateiverwaltung
         ObservableCollection<Datei> dateien = new();
         string aktOrdner;
         string zwischenablage;
@@ -17,27 +16,19 @@ namespace DateiverwaltungApp
         public MainWindow()
         {
             InitializeComponent();
-            
-            // Standardmäßig Desktop anzeigen
             aktOrdner = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            
-            // ListView mit Dateien verbinden
             Dateien.ItemsSource = dateien;
             
-            // Ordnerbaum und Dateien laden
             OrdnerBaumErstellen();
             DateienLaden();
 
-            // Wenn sich die Auswahl ändert, Details anzeigen
             Dateien.SelectionChanged += DateiAusgewählt;
         }
 
         void OrdnerBaumErstellen()
         {
-            // Benutzerordner holen
             var benutzerOrdner = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             
-            // Wichtige Ordner erstellen
             var desktop = OrdnerEintragErstellen("Desktop", Path.Combine(benutzerOrdner, "Desktop"), "🖥️");
             var dokumente = OrdnerEintragErstellen("Dokumente", Path.Combine(benutzerOrdner, "Documents"), "📄");
             var downloads = OrdnerEintragErstellen("Downloads", Path.Combine(benutzerOrdner, "Downloads"), "⭳");
@@ -45,7 +36,6 @@ namespace DateiverwaltungApp
             var musik = OrdnerEintragErstellen("Musik", Path.Combine(benutzerOrdner, "Music"), "🎵");
             var videos = OrdnerEintragErstellen("Videos", Path.Combine(benutzerOrdner, "Videos"), "🎬");
 
-            // Laufwerke hinzufügen
             var laufwerke = new TreeViewItem { Header = "Laufwerke 💽" };
             foreach (var lw in DriveInfo.GetDrives())
             {
@@ -56,7 +46,6 @@ namespace DateiverwaltungApp
                 }
             }
 
-            // Alles zum Baum hinzufügen
             Verzeichnisse.Items.Clear();
             Verzeichnisse.Items.Add(desktop);
             Verzeichnisse.Items.Add(dokumente);
@@ -66,7 +55,6 @@ namespace DateiverwaltungApp
             Verzeichnisse.Items.Add(videos);
             Verzeichnisse.Items.Add(laufwerke);
 
-            // Wenn ein Ordner ausgewählt wird
             Verzeichnisse.SelectedItemChanged += OrdnerAusgewählt;
         }
 
@@ -86,7 +74,7 @@ namespace DateiverwaltungApp
                     eintrag.Expanded += UnterordnerLaden;
                 }
             }
-            catch { } // Fehler ignorieren
+            catch { }
 
             return eintrag;
         }
@@ -96,7 +84,6 @@ namespace DateiverwaltungApp
             var ordner = sender as TreeViewItem;
             if (ordner?.Tag == null) return;
 
-            // Nur laden wenn noch nicht geladen
             if (ordner.Items.Count == 1 && ordner.Items[0] is string)
             {
                 ordner.Items.Clear();
@@ -110,10 +97,10 @@ namespace DateiverwaltungApp
                             var info = new DirectoryInfo(unterordner);
                             ordner.Items.Add(OrdnerEintragErstellen(info.Name, info.FullName, "📁"));
                         }
-                        catch { } // Unzugängliche Ordner überspringen
+                        catch { }
                     }
                 }
-                catch { } // Fehler ignorieren
+                catch { }
             }
         }
 
@@ -167,14 +154,12 @@ namespace DateiverwaltungApp
             {
                 dateien.Clear();
 
-                // Erst Ordner
                 foreach (var ordnerPfad in Directory.GetDirectories(aktOrdner))
                 {
                     var info = new DirectoryInfo(ordnerPfad);
                     dateien.Add(Datei.OrdnerErstellen(info));
                 }
 
-                // Dann Dateien
                 foreach (var dateiPfad in Directory.GetFiles(aktOrdner))
                 {
                     var info = new FileInfo(dateiPfad);
@@ -187,7 +172,262 @@ namespace DateiverwaltungApp
             }
         }
 
-        // [Rest des Codes folgt dem gleichen Muster...]
+        void MenuNeueDatai_Click(object sender, RoutedEventArgs e)
+        {
+            var name = Microsoft.VisualBasic.Interaction.InputBox(
+                "Wie soll die Datei heißen?",
+                "Neue Datei",
+                "Neue Datei.txt");
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                try
+                {
+                    File.WriteAllText(Path.Combine(aktOrdner, name), "");
+                    DateienLaden();
+                }
+                catch (Exception ex)
+                {
+                    FehlerAnzeigen("Datei konnte nicht erstellt werden", ex);
+                }
+            }
+        }
+
+        void MenuNeuerOrdner_Click(object sender, RoutedEventArgs e)
+        {
+            var name = Microsoft.VisualBasic.Interaction.InputBox(
+                "Wie soll der Ordner heißen?",
+                "Neuer Ordner",
+                "Neuer Ordner");
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                try
+                {
+                    Directory.CreateDirectory(Path.Combine(aktOrdner, name));
+                    DateienLaden();
+                }
+                catch (Exception ex)
+                {
+                    FehlerAnzeigen("Ordner konnte nicht erstellt werden", ex);
+                }
+            }
+        }
+
+        void MenuÖffnen_Click(object sender, RoutedEventArgs e)
+        {
+            if (Dateien.SelectedItem is Datei datei)
+            {
+                DateiÖffnen(datei);
+            }
+        }
+
+        void MenuBeenden_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        void MenuKopieren_Click(object sender, RoutedEventArgs e)
+        {
+            if (Dateien.SelectedItem is Datei datei)
+            {
+                zwischenablage = Path.Combine(aktOrdner, datei.Name);
+            }
+        }
+
+        void MenuEinfügen_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(zwischenablage)) return;
+
+            try
+            {
+                var name = Path.GetFileName(zwischenablage);
+                var ziel = Path.Combine(aktOrdner, "Kopie von " + name);
+
+                if (File.Exists(zwischenablage))
+                    File.Copy(zwischenablage, ziel);
+                else if (Directory.Exists(zwischenablage))
+                    OrdnerKopieren(zwischenablage, ziel);
+
+                DateienLaden();
+            }
+            catch (Exception ex)
+            {
+                FehlerAnzeigen("Einfügen fehlgeschlagen", ex);
+            }
+        }
+
+        void MenuLöschen_Click(object sender, RoutedEventArgs e)
+        {
+            if (Dateien.SelectedItem is Datei datei)
+            {
+                var antwort = MessageBox.Show(
+                    $"Soll '{datei.Name}' wirklich gelöscht werden?",
+                    "Löschen",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (antwort == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        var pfad = Path.Combine(aktOrdner, datei.Name);
+                        if (File.Exists(pfad))
+                            File.Delete(pfad);
+                        else if (Directory.Exists(pfad))
+                            Directory.Delete(pfad, true);
+
+                        DateienLaden();
+                    }
+                    catch (Exception ex)
+                    {
+                        FehlerAnzeigen("Löschen fehlgeschlagen", ex);
+                    }
+                }
+            }
+        }
+
+        void MenuUmbenennen_Click(object sender, RoutedEventArgs e)
+        {
+            if (Dateien.SelectedItem is Datei datei)
+            {
+                var neuerName = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Neuer Name:",
+                    "Umbenennen",
+                    datei.Name);
+
+                if (!string.IsNullOrWhiteSpace(neuerName) && neuerName != datei.Name)
+                {
+                    try
+                    {
+                        var alterPfad = Path.Combine(aktOrdner, datei.Name);
+                        var neuerPfad = Path.Combine(aktOrdner, neuerName);
+
+                        if (File.Exists(alterPfad))
+                            File.Move(alterPfad, neuerPfad);
+                        else if (Directory.Exists(alterPfad))
+                            Directory.Move(alterPfad, neuerPfad);
+
+                        DateienLaden();
+                    }
+                    catch (Exception ex)
+                    {
+                        FehlerAnzeigen("Umbenennen fehlgeschlagen", ex);
+                    }
+                }
+            }
+        }
+
+        void MenuAktualisieren_Click(object sender, RoutedEventArgs e)
+        {
+            DateienLaden();
+        }
+
+        void MenuÜber_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(
+                "Dateiverwaltung v1.0\n\n" +
+                "Ein einfacher Dateimanager zum Verwalten von Dateien und Ordnern.",
+                "Über",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
+        void Suchen_Click(object sender, RoutedEventArgs e)
+        {
+            var suchtext = Suche.Text.ToLower();
+            if (string.IsNullOrWhiteSpace(suchtext))
+            {
+                DateienLaden();
+                return;
+            }
+
+            try
+            {
+                dateien.Clear();
+                DateienSuchen(aktOrdner, suchtext);
+            }
+            catch (Exception ex)
+            {
+                FehlerAnzeigen("Suche fehlgeschlagen", ex);
+            }
+        }
+
+        void DateienSuchen(string ordner, string suchtext)
+        {
+            try
+            {
+                foreach (var dateiPfad in Directory.GetFiles(ordner))
+                {
+                    var datei = new FileInfo(dateiPfad);
+                    if (datei.Name.ToLower().Contains(suchtext))
+                    {
+                        dateien.Add(Datei.DateiErstellen(datei));
+                    }
+                }
+
+                foreach (var ordnerPfad in Directory.GetDirectories(ordner))
+                {
+                    var unterordner = new DirectoryInfo(ordnerPfad);
+                    if (unterordner.Name.ToLower().Contains(suchtext))
+                    {
+                        dateien.Add(Datei.OrdnerErstellen(unterordner));
+                    }
+                    DateienSuchen(ordnerPfad, suchtext);
+                }
+            }
+            catch { }
+        }
+
+        void Dateien_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (Dateien.SelectedItem is Datei datei)
+            {
+                DateiÖffnen(datei);
+            }
+        }
+
+        void DateiÖffnen(Datei datei)
+        {
+            var pfad = Path.Combine(aktOrdner, datei.Name);
+            if (datei.IstOrdner)
+            {
+                aktOrdner = pfad;
+                DateienLaden();
+            }
+            else
+            {
+                try
+                {
+                    var start = new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = pfad,
+                        UseShellExecute = true
+                    };
+                    System.Diagnostics.Process.Start(start);
+                }
+                catch (Exception ex)
+                {
+                    FehlerAnzeigen("Datei konnte nicht geöffnet werden", ex);
+                }
+            }
+        }
+
+        void OrdnerKopieren(string quelle, string ziel)
+        {
+            Directory.CreateDirectory(ziel);
+            foreach (var datei in Directory.GetFiles(quelle))
+            {
+                var name = Path.GetFileName(datei);
+                File.Copy(datei, Path.Combine(ziel, name));
+            }
+
+            foreach (var ordner in Directory.GetDirectories(quelle))
+            {
+                var name = Path.GetFileName(ordner);
+                OrdnerKopieren(ordner, Path.Combine(ziel, name));
+            }
+        }
 
         void FehlerAnzeigen(string nachricht, Exception ex)
         {
@@ -199,7 +439,6 @@ namespace DateiverwaltungApp
         }
     }
 
-    // Vereinfachte Datei-Klasse
     class Datei
     {
         public string Name { get; set; }
