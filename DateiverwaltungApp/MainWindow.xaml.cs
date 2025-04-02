@@ -154,7 +154,6 @@ namespace DateiverwaltungApp
                     (FileSystemInfo)new DirectoryInfo(pfad) : 
                     new FileInfo(pfad);
 
-                // Aktualisiere die Detailansicht
                 DateiName.Text = info.Name;
                 Pfad.Text = info.FullName;
                 Größe.Text = datei.GrößeAnzeige;
@@ -176,14 +175,12 @@ namespace DateiverwaltungApp
             {
                 dateiListe.Clear();
 
-                // Ordner laden
                 foreach (var ordner in Directory.GetDirectories(aktuellerOrdner))
                 {
                     var info = new DirectoryInfo(ordner);
                     dateiListe.Add(DateiInfo.ErzeugeInfo(info));
                 }
 
-                // Dateien laden
                 foreach (var datei in Directory.GetFiles(aktuellerOrdner))
                 {
                     var info = new FileInfo(datei);
@@ -194,6 +191,65 @@ namespace DateiverwaltungApp
             {
                 MessageBox.Show($"Fehler beim Laden: {ex.Message}", 
                     "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void Suchen_Click(object sender, RoutedEventArgs e)
+        {
+            var suchText = Suche.Text.ToLower();
+            if (string.IsNullOrWhiteSpace(suchText))
+            {
+                OrdnerLaden();
+                return;
+            }
+
+            try
+            {
+                dateiListe.Clear();
+                SucheDateienRekursiv(aktuellerOrdner, suchText);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler bei der Suche: {ex.Message}", "Fehler", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void SucheDateienRekursiv(string verzeichnis, string suchText)
+        {
+            try
+            {
+                // Dateien im aktuellen Verzeichnis durchsuchen
+                foreach (var dateiPfad in Directory.GetFiles(verzeichnis))
+                {
+                    var datei = new FileInfo(dateiPfad);
+                    if (datei.Name.ToLower().Contains(suchText))
+                    {
+                        dateiListe.Add(DateiInfo.ErzeugeInfo(datei));
+                    }
+                }
+
+                // Unterordner durchsuchen
+                foreach (var ordnerPfad in Directory.GetDirectories(verzeichnis))
+                {
+                    var ordner = new DirectoryInfo(ordnerPfad);
+                    if (ordner.Name.ToLower().Contains(suchText))
+                    {
+                        dateiListe.Add(DateiInfo.ErzeugeInfo(ordner));
+                    }
+                    
+                    // Rekursiv in Unterordnern suchen
+                    SucheDateienRekursiv(ordnerPfad, suchText);
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Ignoriere Ordner, auf die wir keinen Zugriff haben
+            }
+            catch (Exception ex)
+            {
+                // Andere Fehler protokollieren, aber Suche fortsetzen
+                System.Diagnostics.Debug.WriteLine($"Fehler beim Durchsuchen von {verzeichnis}: {ex.Message}");
             }
         }
 
@@ -362,34 +418,6 @@ namespace DateiverwaltungApp
                 "Über",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
-        }
-
-        private void Suchen_Click(object sender, RoutedEventArgs e)
-        {
-            var suchText = Suche.Text.ToLower();
-            if (string.IsNullOrWhiteSpace(suchText))
-            {
-                OrdnerLaden();
-                return;
-            }
-
-            try
-            {
-                dateiListe.Clear();
-                foreach (var element in Directory.GetFileSystemEntries(aktuellerOrdner, "*", SearchOption.TopDirectoryOnly))
-                {
-                    var info = new FileInfo(element);
-                    if (info.Name.ToLower().Contains(suchText))
-                    {
-                        dateiListe.Add(DateiInfo.ErzeugeInfo(info));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Fehler bei der Suche: {ex.Message}", "Fehler", 
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
 
         private void Dateien_MouseDoubleClick(object sender, MouseButtonEventArgs e)
